@@ -365,6 +365,24 @@
             background: var(--bd);
         }
 
+        #mnav {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 36px;
+            padding: 0;
+            background: var(--gl);
+            border: 1px solid var(--gb);
+            border-radius: 6px;
+            color: var(--fg);
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+        }
+
         /* Content */
         #mc {
             position: relative;
@@ -786,6 +804,32 @@
             .ct {
                 padding: 0 20px;
             }
+
+            #mnav { display: flex; }
+
+            .nvl {
+                position: fixed;
+                top: 56px;
+                left: 12px;
+                right: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 18px 20px;
+                border-radius: 14px;
+                background: var(--gl);
+                border: 1px solid var(--gb);
+                -webkit-backdrop-filter: blur(32px) saturate(1.5);
+                backdrop-filter: blur(32px) saturate(1.5);
+                box-shadow: 0 14px 44px rgba(0,20,60,0.22);
+                display: none;
+            }
+
+            .nvl.open { display: flex; }
+
+            .nvl .ns { display: none; }
+
+            .nvl a { font-size: 15px; }
         }
     </style>
 </head>
@@ -865,6 +909,7 @@
             <div class="ns"></div>
             <button id="tg2" style="font-family:Outfit;font-size:14px;font-weight:600;color:var(--mu);background:var(--gl);border:1px solid var(--gb);border-radius:4px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(8px)">☀</button>
         </div>
+        <button id="mnav" aria-label="Menu" aria-expanded="false">☰</button>
     </nav>
 
     <main id="mc">
@@ -1143,14 +1188,13 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
                                 <path fill="#FF2D9B" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
                             </svg>
-                            Clinical context — illustrative
+                            Clinical context
                         </div>
                         <h3 class="hd h3" style="margin-bottom:14px">What the preserved function could mean in the clinic</h3>
                         <ul class="area-bullets" style="margin-top:4px;max-width:760px">
                             <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">A class effect, not one drug.</strong> The aortic band is never removed — permanent pressure overload — yet all three TRPV1 antagonists (BCTC, SB366791, AMG9810) reversed the early loss of function. The arm followed longest held function above vehicle to 32 weeks.</li>
-                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">The benefit.</strong> At 3 weeks post-banding (2 weeks post-treatment), every drug produced a benefit of ~8–11 EF points over vehicle (AMG9810 ~8, a trend; SB366791 ~10; BCTC ~11). Only BCTC was followed to 32 weeks, sustaining ~7 points — the conservative basis for the estimate below.</li>
-                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">Illustrative risk translation.</strong> With the human EF–outcome relationships — +39% mortality hazard per 10-point EF fall &lt;45% (<a href="https://doi.org/10.1161/CIRCULATIONAHA.105.561423" target="_blank" style="border-bottom:1px solid var(--bd)">Solomon 2005</a>) and ~2× cardiac-event risk per 10-point fall (<a href="https://doi.org/10.1161/01.cir.94.11.2735" target="_blank" style="border-bottom:1px solid var(--bd)">Dakik 1996</a>) — that maps to a <strong style="color:var(--pk);font-weight:700;text-decoration:underline">reduction</strong> in <strong style="color:var(--pk);font-weight:700">all-cause mortality hazard of ~20–30%</strong> and in <strong style="color:var(--pk);font-weight:700">cardiac-event risk of ~35–45%</strong>.</li>
-                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">A conservative floor.</strong> The mouse is banded for life — the overload is never relieved — so these are worst-case numbers. In patients, where the underlying overload can itself be treated, the benefit could be greater. (The EF relationships apply below 45%, outside the mouse range, so treat the figures as directional.)</li>
+                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">The benefit.</strong> At 3 weeks post-banding (2 weeks post-treatment), every drug produced a benefit of ~8–11 EF points over vehicle (AMG9810 ~8; SB366791 ~10; BCTC ~11). Only BCTC was followed to 32 weeks, sustaining ~7 points.</li>
+                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">In the clinic.</strong> EF preservation of this magnitude would be clinically meaningful.</li>
                         </ul>
                     </div>
                 </div>
@@ -1561,6 +1605,20 @@
                 if (v.paused) { manuallyPaused = false; tryPlay(); }
                 else { manuallyPaused = true; v.pause(); }
             });
+        })();
+
+        // Mobile nav — hamburger toggles the link menu
+        (function(){
+            var mb = document.getElementById("mnav"), nvl = document.querySelector(".nvl");
+            if (!mb || !nvl) return;
+            function close(){ nvl.classList.remove("open"); mb.setAttribute("aria-expanded","false"); }
+            mb.addEventListener("click", function(e){
+                e.stopPropagation();
+                var open = nvl.classList.toggle("open");
+                mb.setAttribute("aria-expanded", open ? "true" : "false");
+            });
+            nvl.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", close); });
+            document.addEventListener("click", function(e){ if (!nvl.contains(e.target) && e.target !== mb) close(); });
         })();
 
         // Clean Ethereal ECG - single sweeping trace (frame-rate independent)
