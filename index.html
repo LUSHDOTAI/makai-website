@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makai Biotechnology | Cardiovascular Ion Channel Therapeutics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0A1A2E;
+            --bg2: #0E2540;
+            --fg: #E6F1FB;
+            --ac: #378ADD;
+            --pk: #FF2D9B;
+            --mu: #7C96B7;
+            --bd: #1A3A5C;
+            --sn: #122E48;
+            --gl: rgba(14,30,52,0.6);
+            --gb: rgba(55,138,221,0.12);
+        }
+
+        :root.light {
+            --bg: #C8D0DC;
+            --bg2: #BFC8D5;
+            --fg: #0F1A2A;
+            --ac: #2568A8;
+            --pk: #D91A80;
+            --mu: #40566D;
+            --bd: #B8C8D8;
+            --sn: #C8D4E0;
+            --gl: rgba(255,255,255,0.6);
+            --gb: rgba(37,104,168,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg2);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.65;
+            transition: background .5s, color .5s;
+        }
+
+        body.locked {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ::selection {
+            background: rgba(255,45,155,0.25);
+        }
+
+        /* Canvas + atmosphere */
+        #cv {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grl {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(55,138,221,0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(55,138,221,0.12) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle, black, transparent 80%);
+        }
+
+        /* Background heart watermark */
+        .bg-heart {
+            position: fixed;
+            right: -5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 70vw;
+            max-width: 800px;
+            opacity: 0.08;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Entry gate */
+        #eg {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            transition: opacity 1.2s ease, transform 1.2s ease;
+            cursor: pointer;
+        }
+
+        #eg.ex {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        .logo-wrap {
+            padding: 5rem 4rem;
+            position: relative;
+            overflow: visible;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            min-height: 480px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .logo-heart {
+            position: absolute;
+            top: 40%;
+            right: 0;
+            transform: translateY(-50%);
+            width: 320px;
+            height: 380px;
+        }
+
+        .logo-heart .glow {
+            position: absolute;
+            inset: 0;
+            opacity: .25;
+            filter: blur(16px);
+        }
+
+        .logo-heart .solid {
+            position: absolute;
+            inset: 0;
+        }
+
+        .logo-content {
+            position: relative;
+            z-index: 1;
+            max-width: 60%;
+        }
+
+        .lab-of {
+            font-size:17px;
+            font-weight: 500;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            color: var(--pk);
+            margin-bottom: 20px;
+        }
+
+        .title-p {
+            font-size: clamp(42px, 8vw, 68px);
+            font-weight: 800;
+            color: var(--fg);
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            line-height: .88;
+        }
+
+        .title-a {
+            font-size: clamp(42px, 8vw, 68px);
+            font-weight: 800;
+            color: var(--ac);
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            line-height: .88;
+            margin-top: 8px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .seg1 {
+            width: 40px;
+            height: 2px;
+            background: var(--pk);
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+
+        .seg2 {
+            width: 200px;
+            height: 1px;
+            background: var(--bd);
+        }
+
+        .inst {
+            font-size:15px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: var(--mu);
+            margin-top: 18px;
+        }
+
+        .eb {
+            padding: 16px 56px;
+            border: 1px solid var(--gb);
+            color: var(--fg);
+            font-size:16px;
+            text-transform: uppercase;
+            letter-spacing: .6em;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px) saturate(1.3);
+            -webkit-backdrop-filter: blur(20px) saturate(1.3);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all .5s ease;
+            font-family: inherit;
+        }
+
+        .eb:hover {
+            background: var(--pk);
+            color: #fff;
+            transform: scale(1.06);
+            border-color: var(--pk);
+        }
+
+        .rg {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255,45,155,0.25);
+            animation: rp 5s ease-in-out infinite;
+        }
+
+        .rg:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            margin: -150px 0 0 -150px;
+        }
+
+        .rg:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            top: 50%;
+            left: 50%;
+            margin: -250px 0 0 -250px;
+            animation-delay: 1.5s;
+        }
+
+        .rg:nth-child(3) {
+            width: 700px;
+            height: 700px;
+            top: 50%;
+            left: 50%;
+            margin: -350px 0 0 -350px;
+            animation-delay: 3s;
+        }
+
+        @keyframes rp {
+            0%, 100% {
+                transform: scale(1);
+                opacity: .3;
+            }
+            50% {
+                transform: scale(1.06);
+                opacity: .8;
+            }
+        }
+
+        /* Nav */
+        #nv {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 0 36px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--gl);
+            backdrop-filter: blur(32px) saturate(1.5);
+            -webkit-backdrop-filter: blur(32px) saturate(1.5);
+            border-bottom: 1px solid var(--gb);
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: all .8s ease;
+        }
+
+        #nv.vi {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo svg {
+            height: 28px;
+            width: auto;
+        }
+
+        .nav-logo .nm {
+            font-size:19px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo .nm .t1 {
+            color: var(--fg);
+        }
+
+        .nav-logo .nm .t2 {
+            color: var(--ac);
+        }
+
+        .nvl {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .nvl a, .nvl button {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .nvl a {
+            font-size:14px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--fg);
+            opacity: .9;
+            transition: color .2s, opacity .2s;
+        }
+
+        .nvl a:hover {
+            color: var(--pk);
+            opacity: 1;
+        }
+
+        .ns {
+            width: 1px;
+            height: 12px;
+            background: var(--bd);
+        }
+
+        /* Content */
+        #mc {
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            display: none;
+            transition: opacity 1.4s ease;
+            padding-bottom: 60px;
+        }
+
+        #mc.vi {
+            display: block;
+            opacity: 1;
+        }
+
+        .rv {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+        }
+
+        .rv.ac {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.2); }
+        }
+
+        .ct {
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .sc {
+            padding: 100px 0;
+        }
+
+        #grain {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px;
+        }
+
+        /* FROSTED GLASS PANELS */
+        .gp > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        .gp {
+            position: relative;
+            overflow: visible;
+            background: rgba(12,28,50,0.15);
+            border: 1px solid rgba(55,138,221,0.25);
+            border-top: 1px solid rgba(255,45,155,0.15);
+            backdrop-filter: blur(60px) saturate(1.8);
+            -webkit-backdrop-filter: blur(60px) saturate(1.8);
+            border-radius: 18px;
+            padding: 44px 48px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.12);
+            transition: border-color .4s ease, box-shadow .4s ease, transform .3s ease;
+        }
+
+        .gp::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            border-radius: 2px;
+            z-index: 4;
+            background: linear-gradient(90deg, transparent 5%, rgba(255,45,155,0.5) 30%, rgba(55,138,221,0.4) 70%, transparent 95%);
+        }
+
+        .gp::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 18px;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(ellipse at 15% 10%, rgba(255,255,255,0.06) 0%, transparent 50%);
+        }
+
+        .gp:hover {
+            border-color: rgba(55,138,221,0.35);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 20px rgba(55,138,221,0.08), inset 0 1px 0 rgba(255,255,255,0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Light Mode Overrides */
+        :root.light .gp {
+            background: rgba(240,245,250,0.25);
+            border: 1px solid rgba(55,138,221,0.18);
+            border-top: 1px solid rgba(255,45,155,0.15);
+            box-shadow: 0 12px 48px rgba(0,20,60,0.12), 0 2px 8px rgba(0,20,60,0.08), inset 0 0 120px rgba(255,255,255,0.4);
+            backdrop-filter: blur(65px) saturate(1.6);
+            -webkit-backdrop-filter: blur(65px) saturate(1.6);
+        }
+
+        :root.light .gp:hover {
+            border-color: rgba(55,138,221,0.25);
+            border-top-color: rgba(255,45,155,0.25);
+            box-shadow: 0 12px 40px rgba(0,20,60,0.12), 0 0 30px rgba(55,138,221,0.1), 0 0 1px rgba(255,45,155,0.2), inset 0 1px 0 rgba(255,255,255,0.8);
+            transform: translateY(-3px);
+        }
+
+        :root.light .gp-inner {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(55,138,221,0.15);
+            border-top: 1px solid rgba(255,45,155,0.18);
+            box-shadow: 0 6px 28px rgba(0,20,60,0.08), 0 1px 4px rgba(0,20,60,0.06), inset 0 1px 0 rgba(255,255,255,0.5);
+            backdrop-filter: blur(55px) saturate(1.8);
+            -webkit-backdrop-filter: blur(55px) saturate(1.8);
+        }
+
+        .gp-inner {
+            position: relative;
+            background: rgba(12,28,50,0.25);
+            border: 1px solid rgba(55,138,221,0.18);
+            border-top: 1px solid rgba(55,138,221,0.3);
+            backdrop-filter: blur(50px) saturate(1.7);
+            -webkit-backdrop-filter: blur(50px) saturate(1.7);
+            border-radius: 12px;
+            padding: 36px 40px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .gp-inner > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        .gp-inner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 8%;
+            right: 8%;
+            height: 1px;
+            border-radius: 1px;
+            z-index: 4;
+            background: linear-gradient(90deg, transparent, rgba(255,45,155,0.3), rgba(55,138,221,0.25), transparent);
+        }
+
+        .lb {
+            font-size:15px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--pk);
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        .hd {
+            font-weight: 800;
+            color: var(--fg);
+            line-height: 1.08;
+            letter-spacing: -0.035em;
+        }
+
+        .h2 {
+            font-size: clamp(24px, 3.2vw, 38px);
+        }
+
+        .h3 {
+            font-size: clamp(20px, 2.5vw, 28px);
+        }
+
+        .kw {
+            display: inline-block;
+            padding: 4px 14px;
+            font-size:14px;
+            font-weight: 500;
+            color: var(--ac);
+            border: 1px solid rgba(55,138,221,0.18);
+            border-radius: 4px;
+            margin: 0 6px 6px 0;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .kw:hover {
+            border-color: var(--pk);
+            color: var(--pk);
+            background: rgba(255,45,155,0.05);
+        }
+
+        .area-bullets {
+            margin: 14px 0;
+            padding-left: 20px;
+            list-style: none;
+        }
+
+        .area-bullets li {
+            font-size:17px;
+            color: var(--fg);
+            opacity: .92;
+            line-height: 1.8;
+            font-weight: 300;
+            margin-bottom: 6px;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .area-bullets li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--pk);
+            opacity: .6;
+        }
+
+        .link-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .link-pill {
+            font-size:14px;
+            font-weight: 600;
+            letter-spacing: .5px;
+            padding: 5px 14px;
+            border-radius: 4px;
+            border: 1px solid var(--gb);
+            color: var(--ac);
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .link-pill:hover {
+            border-color: var(--pk);
+            color: var(--pk);
+        }
+
+        .link-pill.paper {
+            border-color: rgba(72,160,120,0.25);
+            color: #48a078;
+        }
+
+        .link-pill.patent {
+            border-color: rgba(212,160,72,0.25);
+            color: #d4a048;
+        }
+
+        .link-pill.news {
+            border-color: rgba(255,45,155,0.2);
+            color: var(--pk);
+        }
+
+        .mg {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .gs {
+            padding: 26px 30px;
+            border-radius: 12px;
+            background: rgba(8,22,40,0.5);
+        }
+
+        .mv {
+            font-size:50px;
+            font-weight: 200;
+            color: var(--ac);
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -0.04em;
+        }
+
+        .ml {
+            font-size:14px;
+            color: var(--mu);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .ccg {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 56px;
+        }
+
+        .ccl {
+            font-size:14px;
+            letter-spacing: 2.5px;
+            color: var(--pk);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .ccv {
+            font-size:19px;
+            color: var(--fg);
+            line-height: 1.7;
+            opacity: .8;
+        }
+
+        .ccv a {
+            border-bottom: 1px solid var(--bd);
+            padding-bottom: 2px;
+        }
+
+        .ai {
+            font-size:17px;
+            color: var(--fg);
+            opacity: .9;
+            padding-left: 16px;
+            border-left: 2px solid var(--bd);
+            margin-bottom: 10px;
+        }
+
+        .pls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+
+        .pl {
+            padding: 6px 16px;
+            font-size:14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--ac);
+            border: 1px solid rgba(55,138,221,0.2);
+            border-radius: 4px;
+            transition: all .2s;
+        }
+
+        .pl:hover {
+            background: rgba(55,138,221,0.06);
+        }
+
+        .pl.pk {
+            color: var(--pk);
+            border-color: rgba(255,45,155,0.2);
+        }
+
+        footer {
+            padding: 32px 40px;
+            border-top: 1px solid var(--bd);
+            background: var(--gl);
+            backdrop-filter: blur(16px);
+        }
+
+        footer .fn {
+            max-width: 1060px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer .co {
+            font-size:14px;
+            color: var(--mu);
+        }
+
+        .d1 { transition-delay: .1s; }
+        .d2 { transition-delay: .2s; }
+        .d3 { transition-delay: .3s; }
+        .d4 { transition-delay: .4s; }
+
+        @media (max-width: 768px) {
+            .logo-wrap {
+                flex-direction: column;
+                text-align: center;
+                padding: 3rem 2rem;
+            }
+            
+            .logo-content {
+                max-width: 100%;
+                margin-bottom: 2rem;
+            }
+            
+            .logo-heart {
+                position: relative;
+                width: 200px;
+                height: 240px;
+                top: 0;
+                right: 0;
+                transform: none;
+                margin: 0 auto;
+            }
+            
+            .mg {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .ccg {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            
+            .ct {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body class="locked">
+    <div class="grl"></div>
+    <div class="bg-heart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+            <path fill="#1E5A8A" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+            <path fill="#FF2D9B" d="M35 25c-3-2-6-2-8 0-2 2-2 5 0 7l23 23 23-23c2-2 2-5 0-7-2-2-6-2-8 0l-15 15L35 25z"/>
+        </svg>
+    </div>
+    <div class="ob c"></div>
+    <div id="grain"></div>
+    <canvas id="cv"></canvas>
+    
+    <div id="eg">
+        <div style="position:absolute;pointer-events:none">
+            <div class="rg"></div>
+            <div class="rg"></div>
+            <div class="rg"></div>
+        </div>
+        <div class="logo-wrap">
+            <div class="logo-heart">
+                <div class="glow">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+                        <path fill="#2878CC" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                        <path fill="#FF2D9B" d="M35 25c-3-2-6-2-8 0-2 2-2 5 0 7l23 23 23-23c2-2 2-5 0-7-2-2-6-2-8 0l-15 15L35 25z"/>
+                    </svg>
+                </div>
+                <div class="solid">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+                        <path fill="#1A4A70" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                        <path fill="#FF2D9B" d="M35 25c-3-2-6-2-8 0-2 2-2 5 0 7l23 23 23-23c2-2 2-5 0-7-2-2-6-2-8 0l-15 15L35 25z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="logo-content">
+                <div style="font-size:clamp(32px,6vw,56px);font-weight:800;letter-spacing:-1.5px;margin-bottom:16px;line-height:.9">
+                    <div style="color:#FFFFFF">Makai</div>
+                    <div style="color:#378ADD">Biotechnology</div>
+                </div>
+                <p class="lab-of">Ion Channel</p>
+                <h1 class="title-p">Cardiovascular</h1>
+                <h1 class="title-a">Therapeutics</h1>
+                <div class="divider">
+                    <span class="seg1"></span>
+                    <span class="seg2"></span>
+                </div>
+                <p class="inst" style="color:#6A8EAA">Ion Channel Research Laboratory<br>Honolulu, Hawaii</p>
+                <div style="margin-top:28px">
+                    <button class="eb">Enter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav id="nv">
+        <a href="#" class="nav-logo" style="text-decoration:none">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="auto" height="28">
+                <path fill="var(--sn)" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                <path fill="var(--pk)" d="M35 25c-3-2-6-2-8 0-2 2-2 5 0 7l23 23 23-23c2-2 2-5 0-7-2-2-6-2-8 0l-15 15L35 25z"/>
+            </svg>
+            <span class="nm">
+                <span class="t1">Makai </span>
+                <span class="t2">Biotechnology</span>
+            </span>
+        </a>
+        <div class="nvl">
+            <a href="#science">Science</a>
+            <a href="#research">Research</a>
+            <a href="#team">Team</a>
+            <a href="#ip">IP</a>
+            <a href="#impact">Programme</a>
+            <a href="#contact">Contact</a>
+            <div class="ns"></div>
+            <a href="https://www.linkedin.com/company/makai-biotechnology" target="_blank" style="font-size:14px;font-weight:600;letter-spacing:1.5px">LINKEDIN</a>
+            <div class="ns"></div>
+            <button id="tg2" style="font-family:Outfit;font-size:14px;font-weight:600;color:var(--mu);background:var(--gl);border:1px solid var(--gb);border-radius:4px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(8px)">☀</button>
+        </div>
+    </nav>
+
+    <main id="mc">
+        <!-- Prominent Business Name Section -->
+        <div class="ct" style="padding-top:80px">
+            <div style="text-align:center;margin-bottom:60px">
+                <div style="font-size:clamp(48px,8vw,84px);font-weight:800;letter-spacing:-2px;line-height:.9;margin-bottom:12px">
+                    <span style="color:var(--fg)">Makai </span>
+                    <span style="color:var(--ac)">Biotechnology</span>
+                </div>
+                <div style="font-size:19px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--pk);opacity:.85">
+                    Ion Channel Research Laboratory
+                </div>
+                <div style="font-size:16px;font-weight:300;letter-spacing:1px;color:var(--mu);margin-top:8px">
+                    Honolulu, Hawaii
+                </div>
+            </div>
+        </div>
+
+        <div class="rv" style="padding:0 40px 0;display:flex;align-items:center;gap:16px;cursor:pointer;justify-content:center;margin-bottom:40px" id="main-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="48" style="vertical-align:middle;flex-shrink:0;opacity:.6">
+                <path fill="#122E48" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                <path fill="#FF2D9B" d="M35 25c-3-2-6-2-8 0-2 2-2 5 0 7l23 23 23-23c2-2 2-5 0-7-2-2-6-2-8 0l-15 15L35 25z"/>
+            </svg>
+            <div>
+                <span style="font-size:14px;font-weight:500;letter-spacing:6px;text-transform:uppercase;color:var(--pk);opacity:.8">Ion Channel</span><br>
+                <span style="font-size:26px;font-weight:700;letter-spacing:-0.5px">
+                    <span style="color:var(--fg)">Cardiovascular </span>
+                    <span style="color:var(--ac)">Therapeutics</span>
+                </span>
+            </div>
+        </div>
+
+        <section style="min-height:55vh;display:flex;align-items:center;padding-top:40px">
+            <div class="ct">
+                <div class="rv gp" style="max-width:740px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="#FF2D9B" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                            </svg>
+                            Overview
+                        </div>
+                        <h2 class="hd" style="font-size:clamp(36px,5.5vw,62px);font-weight:200;letter-spacing:-0.04em;margin-bottom:24px">
+                            Targeting TRPV1<br><span style="font-weight:800">in heart failure</span>
+                        </h2>
+                        <p style="font-size:21px;color:var(--fg);opacity:.92;max-width:580px;line-height:1.85;font-weight:300">
+                            Makai develops TRPV1 antagonists for cardiovascular disease. In preclinical pressure-overload models, TRPV1 contributes to cardiac hypertrophy and heart-failure progression, and orally delivered TRPV1 antagonists reverse already-established cardiac dysfunction in mice. The work rests on target-biology and method-of-use intellectual property exclusively licensed from the University of Hawaii.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding:40px 0 80px">
+            <div class="ct">
+                <div class="rv gp" style="max-width:780px;margin:0 auto;text-align:center;border-left:3px solid var(--pk);border-radius:0 18px 18px 0;background:rgba(140,160,190,0.08);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);padding:40px 48px;border:1px solid rgba(55,138,221,0.2);border-left:3px solid var(--pk);box-shadow:0 8px 32px rgba(0,20,60,0.1),0 0 1px rgba(55,138,221,0.3),inset 0 1px 0 rgba(255,255,255,0.5)">
+                    <p style="font-size:24px;color:var(--fg);line-height:1.75;font-weight:200;font-style:italic">
+                        TRPV1 is a physical component of the cardiac natriuretic-peptide receptor (NPR1 / cGMP / PKG) signalling complex. In mouse pressure-overload models, orally delivered TRPV1 antagonists reduce atrial natriuretic peptide and reverse already-established cardiac dysfunction.
+                    </p>
+                    <div style="margin-top:20px;font-size:15px;color:var(--pk);letter-spacing:3px;text-transform:uppercase;font-weight:500">
+                        Horton et al., Channels, 2019
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="science" class="sc">
+            <div class="ct">
+                <div class="rv" style="margin-bottom:40px">
+                    <div class="lb">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                            <path fill="#FF2D9B" d="M60 5L25 50h18L33 95 75 50H55z"/>
+                        </svg>
+                        The Science
+                    </div>
+                    <h2 class="hd h2" style="margin-bottom:12px">TRPV1 Ion Channel Discovery</h2>
+                    <p style="font-size:19px;color:var(--mu);font-weight:300;max-width:640px">
+                        Twenty years of research revealed that TRPV1—best known for detecting chili pepper heat—drives heart failure progression.
+                    </p>
+                </div>
+
+                <div class="rv gp d1" style="margin-bottom:16px">
+                    <div class="gp-inner">
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48" style="vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="#FF2D9B" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                            </svg>
+                            <h3 class="hd h3" style="margin-bottom:0">The Discovery</h3>
+                        </div>
+                        <p style="font-size:19px;color:var(--fg);opacity:.92;line-height:1.9;font-weight:300;margin-bottom:4px">
+                            Heart failure affects nearly 6.7 million US adults, and current drugs slow its progression rather than reverse it. TRPV1—the channel best known for sensing chili-pepper heat—is also expressed in cardiac tissue, where it contributes to pressure-overload hypertrophy and heart-failure progression. Removing TRPV1 function, genetically or pharmacologically, is protective in preclinical models.
+                        </p>
+                        <ul class="area-bullets">
+                            <li>Every oral/systemic TRPV1 antagonist tested — BCTC, SB366791 and AMG9810, three structurally distinct molecules — reversed the early loss of cardiac function after pressure overload; the effect tracks the target, not one compound.</li>
+                            <li>Oral BCTC, started after loss of function was established, reversed fractional shortening within weeks and held function above vehicle to 32 weeks.</li>
+                            <li>With treatment, less of what drives failure: heart-weight gain, cardiomyocyte hypertrophy, fibrosis, ANP, inflammation and tissue remodelling.</li>
+                            <li>Healthier animals — body weight significantly higher through 32 weeks (P&lt;0.0001).</li>
+                            <li>TRPV1-null mice are protected from pressure-overload hypertrophy.</li>
+                            <li>The TRPV1–NPR1 interaction and PKG phosphorylation of TRPV1 are demonstrated biochemically; the broader cardiac mechanism remains a proposed model.</li>
+                            <li>Independent human signal: a Pila Pharma Phase 2 trial of a TRPV1 antagonist reported reduced ANP.</li>
+                        </ul>
+                        <div>
+                            <span class="kw">TRPV1</span>
+                            <span class="kw">Heart Failure</span>
+                            <span class="kw">ANP</span>
+                            <span class="kw">BCTC</span>
+                            <span class="kw">Cardiac Hypertrophy</span>
+                        </div>
+                        <div class="link-row" style="margin-top:14px">
+                            <a href="https://doi.org/10.4161/chan.23006" target="_blank" class="link-pill paper">Heart Failure Treatment ↗</a>
+                            <a href="https://doi.org/10.1080/19336950.2018.1547611" target="_blank" class="link-pill paper">ANP Signaling ↗</a>
+                            <a href="https://patents.google.com/patent/US9084786" target="_blank" class="link-pill patent">US Patent 9,084,786 ↗</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rv gp" style="margin-top:16px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <circle cx="50" cy="50" r="36" fill="none" stroke="#FF2D9B" stroke-width="6"/>
+                                <circle cx="50" cy="50" r="13" fill="#FF2D9B"/>
+                            </svg>
+                            Mechanism
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:6px">Proposed mechanism: TRPV1 in the natriuretic-peptide signalling complex</h3>
+                        <p style="font-size:16px;color:var(--mu);font-weight:300;line-height:1.6;margin-bottom:22px;max-width:700px">
+                            TRPV1 physically associates with the natriuretic-peptide receptor NPR1. In the proposed model, ANP → NPR1/GC → cGMP → PKG phosphorylates and inhibits TRPV1. The interaction and the phosphorylation are shown biochemically; the cardiac cell type and the precise site of action are not yet defined. What is clear functionally is the outcome: blocking TRPV1 — pharmacologically or genetically — reduces calcium entry and is protective in these models.
+                        </p>
+                        <div class="mech-vid-wrap" style="position:relative;background:#050d18;border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin:2px 0 14px;cursor:pointer">
+                            <video id="mechVid" muted loop playsinline preload="metadata" poster="assets/trpv1-npr1-animation-poster.jpg" aria-label="Structure-based animation of the proposed TRPV1–NPR1 signalling model" style="width:100%;height:auto;display:block">
+                                <source src="assets/trpv1-npr1-animation.mp4" type="video/mp4">
+                            </video>
+                            <div class="mech-vid-badge" style="position:absolute;top:12px;right:14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);pointer-events:none">Animation</div>
+                        </div>
+                        <p style="font-size:14px;color:var(--mu);font-weight:300;line-height:1.6;margin:0 0 24px">
+                            Structure-based animation of the proposed model — plays when scrolled into view; click to pause or resume. Molecular shapes are PDB-derived; domain assembly, binding poses and motion are illustrative, and molecules are enlarged for clarity.
+                        </p>
+                        <div style="background:#ffffff;border-radius:12px;padding:24px 28px;margin:2px 0">
+                            <img src="assets/trpv1-npr1-fig1.png" alt="Schematic model of TRPV1 interacting with NPR1: ANP activates NPR1's guanylyl cyclase (GC) to produce cGMP from GTP, which activates PKG; PKG phosphorylates TRPV1 and inhibits its gating." style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto">
+                        </div>
+                        <p style="font-size:14px;color:var(--mu);font-weight:300;line-height:1.6;margin-top:16px">
+                            Figure 1 from Horton et al., <a href="https://doi.org/10.1080/19336950.2018.1547611" target="_blank" style="border-bottom:1px solid var(--bd)">Channels 2019</a>. The TRPV1–NPR1 interaction, ANP-driven cGMP/PKG signalling, and PKG phosphorylation of TRPV1 are each demonstrated biochemically and electrophysiologically in the same paper.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rv gp" style="margin-top:16px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="none" stroke="#FF2D9B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M12 14v74h76"/>
+                                <path fill="none" stroke="#FF2D9B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M24 40l20 18 16-28 20 12"/>
+                            </svg>
+                            Preclinical data
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:6px">TRPV1 antagonism reverses and maintains cardiac function after pressure overload</h3>
+                        <p style="font-size:16px;color:var(--mu);font-weight:300;line-height:1.6;margin-bottom:26px;max-width:700px">
+                            Mouse transverse aortic constriction (TAC) model. Antagonists were given orally one week after TAC — only after loss of function was established, so the design tests reversal of existing disease, not prevention. Three structurally distinct TRPV1 antagonists reverse the early decline; BCTC was followed to 32 weeks.
+                        </p>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px">
+                            <div>
+                                <div style="font-size:16px;font-weight:600;color:var(--fg);margin-bottom:2px">Early reversal — three antagonists</div>
+                                <div style="font-size:14px;color:var(--mu);margin-bottom:12px">Ejection fraction, 0–3 weeks post-TAC</div>
+                                <svg viewBox="0 0 380 250" width="100%" style="max-width:420px;height:auto;display:block" xmlns="http://www.w3.org/2000/svg" font-family="Outfit, sans-serif">
+                                    <g stroke="var(--bd)" stroke-width="1" opacity="0.5">
+                                        <line x1="45" y1="25" x2="360" y2="25"/>
+                                        <line x1="45" y1="85" x2="360" y2="85"/>
+                                        <line x1="45" y1="145" x2="360" y2="145"/>
+                                        <line x1="45" y1="205" x2="360" y2="205"/>
+                                    </g>
+                                    <line x1="45" y1="22" x2="45" y2="205" stroke="var(--fg)" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="45" y1="205" x2="360" y2="205" stroke="var(--fg)" stroke-width="1.5" opacity="0.5"/>
+                                    <g fill="var(--mu)" font-size="11" text-anchor="end">
+                                        <text x="38" y="209">65</text>
+                                        <text x="38" y="149">75</text>
+                                        <text x="38" y="89">85</text>
+                                        <text x="38" y="29">95</text>
+                                    </g>
+                                    <text x="13" y="115" fill="var(--mu)" font-size="11" text-anchor="middle" transform="rotate(-90 13 115)">Ejection fraction (%)</text>
+                                    <g fill="var(--mu)" font-size="11" text-anchor="middle">
+                                        <text x="45" y="222">0</text>
+                                        <text x="150" y="222">1</text>
+                                        <text x="255" y="222">2</text>
+                                        <text x="360" y="222">3</text>
+                                    </g>
+                                    <text x="202" y="242" fill="var(--mu)" font-size="11" text-anchor="middle">Weeks post-TAC</text>
+                                    <line x1="150" y1="25" x2="150" y2="205" stroke="#D9A400" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.95"/>
+                                    <text x="150" y="16" fill="#D9A400" font-size="10" font-weight="600" text-anchor="middle">treatment (wk 1)</text>
+                                    <polyline fill="none" stroke="var(--fg)" stroke-width="2" stroke-dasharray="5 3" points="45,55 150,121 255,163 360,181"/>
+                                    <polyline fill="none" stroke="var(--pk)" stroke-width="2.5" points="45,55 150,121 255,115 360,109"/>
+                                    <polyline fill="none" stroke="var(--ac)" stroke-width="2.5" points="45,55 150,121 255,109 360,115"/>
+                                    <polyline fill="none" stroke="#d4a048" stroke-width="2.5" points="45,55 150,127 255,133 360,139"/>
+                                    <g>
+                                        <circle fill="var(--fg)" cx="45" cy="55" r="2.5"/><circle fill="var(--fg)" cx="150" cy="121" r="2.5"/><circle fill="var(--fg)" cx="255" cy="163" r="2.5"/><circle fill="var(--fg)" cx="360" cy="181" r="2.5"/>
+                                        <circle fill="var(--pk)" cx="45" cy="55" r="2.5"/><circle fill="var(--pk)" cx="150" cy="121" r="2.5"/><circle fill="var(--pk)" cx="255" cy="115" r="2.5"/><circle fill="var(--pk)" cx="360" cy="109" r="2.5"/>
+                                        <circle fill="var(--ac)" cx="45" cy="55" r="2.5"/><circle fill="var(--ac)" cx="150" cy="121" r="2.5"/><circle fill="var(--ac)" cx="255" cy="109" r="2.5"/><circle fill="var(--ac)" cx="360" cy="115" r="2.5"/>
+                                        <circle fill="#d4a048" cx="45" cy="55" r="2.5"/><circle fill="#d4a048" cx="150" cy="127" r="2.5"/><circle fill="#d4a048" cx="255" cy="133" r="2.5"/><circle fill="#d4a048" cx="360" cy="139" r="2.5"/>
+                                    </g>
+                                </svg>
+                                <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:14px;color:var(--mu)">
+                                    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:16px;height:0;border-top:2px dashed var(--fg);display:inline-block"></span>Vehicle</span>
+                                    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:16px;height:3px;background:var(--pk);display:inline-block;border-radius:2px"></span>BCTC</span>
+                                    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:16px;height:3px;background:var(--ac);display:inline-block;border-radius:2px"></span>SB366791</span>
+                                    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:16px;height:3px;background:#d4a048;display:inline-block;border-radius:2px"></span>AMG9810</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size:16px;font-weight:600;color:var(--fg);margin-bottom:2px">Sustained response — BCTC</div>
+                                <div style="font-size:14px;color:var(--mu);margin-bottom:12px">Fractional shortening, to 32 weeks</div>
+                                <svg viewBox="0 0 380 250" width="100%" style="max-width:420px;height:auto;display:block" xmlns="http://www.w3.org/2000/svg" font-family="Outfit, sans-serif">
+                                    <g stroke="var(--bd)" stroke-width="1" opacity="0.5">
+                                        <line x1="45" y1="25" x2="360" y2="25"/>
+                                        <line x1="45" y1="61" x2="360" y2="61"/>
+                                        <line x1="45" y1="97" x2="360" y2="97"/>
+                                        <line x1="45" y1="133" x2="360" y2="133"/>
+                                        <line x1="45" y1="169" x2="360" y2="169"/>
+                                        <line x1="45" y1="205" x2="360" y2="205"/>
+                                    </g>
+                                    <line x1="45" y1="22" x2="45" y2="205" stroke="var(--fg)" stroke-width="1.5" opacity="0.5"/>
+                                    <line x1="45" y1="205" x2="360" y2="205" stroke="var(--fg)" stroke-width="1.5" opacity="0.5"/>
+                                    <g fill="var(--mu)" font-size="11" text-anchor="end">
+                                        <text x="38" y="209">30</text>
+                                        <text x="38" y="173">40</text>
+                                        <text x="38" y="137">50</text>
+                                        <text x="38" y="101">60</text>
+                                        <text x="38" y="65">70</text>
+                                        <text x="38" y="29">80</text>
+                                    </g>
+                                    <text x="13" y="115" fill="var(--mu)" font-size="11" text-anchor="middle" transform="rotate(-90 13 115)">Fractional shortening (%)</text>
+                                    <g fill="var(--mu)" font-size="11" text-anchor="middle">
+                                        <text x="45" y="222">0</text>
+                                        <text x="124" y="222">8</text>
+                                        <text x="203" y="222">16</text>
+                                        <text x="281" y="222">24</text>
+                                        <text x="360" y="222">32</text>
+                                    </g>
+                                    <text x="202" y="242" fill="var(--mu)" font-size="11" text-anchor="middle">Weeks post-TAC</text>
+                                    <defs><marker id="arrB" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L6,3.5 L0,7 Z" fill="#D9A400"/></marker></defs>
+                                    <line x1="55" y1="25" x2="55" y2="205" stroke="#D9A400" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.95"/>
+                                    <text x="70" y="13" fill="#D9A400" font-size="10" font-weight="600" text-anchor="start">treatment (wk 1)</text>
+                                    <path d="M68 16 Q 60 20 56 23.5" fill="none" stroke="#D9A400" stroke-width="1.3" opacity="0.95" marker-end="url(#arrB)"/>
+                                    <polygon fill="var(--pk)" opacity="0.13" points="55,61 84,32 124,43 163,86 203,108 242,126 281,140 321,162 360,162 360,183 321,176 281,162 242,144 203,147 163,122 124,90 84,83 55,61"/>
+                                    <polyline fill="none" stroke="var(--fg)" stroke-width="2" stroke-dasharray="5 3" points="45,47 55,61 84,83 124,90 163,122 203,147 242,144 281,162 321,176 360,183"/>
+                                    <polyline fill="none" stroke="var(--pk)" stroke-width="2.5" points="45,54 55,61 84,32 124,43 163,86 203,108 242,126 281,140 321,162 360,162"/>
+                                    <g fill="var(--fg)">
+                                        <circle cx="45" cy="47" r="2.5"/><circle cx="55" cy="61" r="2.5"/><circle cx="84" cy="83" r="2.5"/><circle cx="124" cy="90" r="2.5"/><circle cx="163" cy="122" r="2.5"/><circle cx="203" cy="147" r="2.5"/><circle cx="242" cy="144" r="2.5"/><circle cx="281" cy="162" r="2.5"/><circle cx="321" cy="176" r="2.5"/><circle cx="360" cy="183" r="2.5"/>
+                                    </g>
+                                    <g fill="var(--pk)">
+                                        <circle cx="45" cy="54" r="2.5"/><circle cx="55" cy="61" r="2.5"/><circle cx="84" cy="32" r="2.5"/><circle cx="124" cy="43" r="2.5"/><circle cx="163" cy="86" r="2.5"/><circle cx="203" cy="108" r="2.5"/><circle cx="242" cy="126" r="2.5"/><circle cx="281" cy="140" r="2.5"/><circle cx="321" cy="162" r="2.5"/><circle cx="360" cy="162" r="2.5"/>
+                                    </g>
+                                    <g fill="var(--pk)" font-size="13" font-weight="700" text-anchor="middle">
+                                        <text x="84" y="26">∗</text>
+                                        <text x="163" y="80">∗</text>
+                                        <text x="203" y="100">∗∗</text>
+                                        <text x="281" y="132">∗</text>
+                                        <text x="356" y="154">∗</text>
+                                    </g>
+                                </svg>
+                                <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:14px;color:var(--mu)">
+                                    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:16px;height:0;border-top:2px dashed var(--fg);display:inline-block"></span>Vehicle</span>
+                                    <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:16px;height:3px;background:var(--pk);display:inline-block;border-radius:2px"></span>BCTC (20 mg/kg oral)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="font-size:14px;color:var(--mu);font-weight:300;line-height:1.6;margin-top:16px">
+                            Redrawn from Horton et al., <a href="https://doi.org/10.1080/19336950.2018.1547611" target="_blank" style="border-bottom:1px solid var(--bd)">Channels 2019</a> (Fig. 5), building on <a href="https://doi.org/10.4161/chan.23006" target="_blank" style="border-bottom:1px solid var(--bd)">Channels 2013</a>. Mouse data, n = 5 per group; antagonists dosed orally from week 1 after TAC. ∗ p&lt;0.05, ∗∗ p&lt;0.01 vs vehicle. Trends read from the published figures — see the source papers for the primary data.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rv gp" style="margin-top:16px;border-left:3px solid var(--pk)">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="#FF2D9B" d="M50 88C20 68 5 50 5 35 5 20 17 8 30 8c7 0 14 4 20 12C56 12 63 8 70 8c13 0 25 12 25 27 0 15-15 33-45 53z"/>
+                            </svg>
+                            Clinical context — illustrative
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:14px">What the preserved function could mean in the clinic</h3>
+                        <ul class="area-bullets" style="margin-top:4px;max-width:760px">
+                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">A class effect, not one drug.</strong> The aortic band is never removed — permanent pressure overload — yet all three TRPV1 antagonists (BCTC, SB366791, AMG9810) reversed the early loss of function. The arm followed longest held function above vehicle to 32 weeks.</li>
+                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">The benefit.</strong> At 3 weeks post-banding (2 weeks post-treatment), every drug produced a benefit of ~8–11 EF points over vehicle (AMG9810 ~8, a trend; SB366791 ~10; BCTC ~11). Only BCTC was followed to 32 weeks, sustaining ~7 points — the conservative basis for the estimate below.</li>
+                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">Illustrative risk translation.</strong> With the human EF–outcome relationships — +39% mortality hazard per 10-point EF fall &lt;45% (<a href="https://doi.org/10.1161/CIRCULATIONAHA.105.561423" target="_blank" style="border-bottom:1px solid var(--bd)">Solomon 2005</a>) and ~2× cardiac-event risk per 10-point fall (<a href="https://doi.org/10.1161/01.cir.94.11.2735" target="_blank" style="border-bottom:1px solid var(--bd)">Dakik 1996</a>) — that maps to a <strong style="color:var(--pk);font-weight:700;text-decoration:underline">reduction</strong> in <strong style="color:var(--pk);font-weight:700">all-cause mortality hazard of ~20–30%</strong> and in <strong style="color:var(--pk);font-weight:700">cardiac-event risk of ~35–45%</strong>.</li>
+                            <li style="font-size:18px;opacity:.95"><strong style="font-weight:600">A conservative floor.</strong> The mouse is banded for life — the overload is never relieved — so these are worst-case numbers. In patients, where the underlying overload can itself be treated, the benefit could be greater. (The EF relationships apply below 45%, outside the mouse range, so treat the figures as directional.)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="research" class="sc">
+            <div class="ct">
+                <div class="mg">
+                    <div class="rv gp gs d1" style="text-align:center;padding:44px 16px">
+                        <div style="opacity:.4;margin-bottom:12px">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+                                <rect x="10" y="10" width="35" height="80" rx="4" fill="none" stroke="#FF2D9B" stroke-width="5"/>
+                                <rect x="45" y="10" width="45" height="80" rx="4" fill="none" stroke="#FF2D9B" stroke-width="5"/>
+                            </svg>
+                        </div>
+                        <div class="mv">50+</div>
+                        <div class="ml">Publications</div>
+                    </div>
+                    <div class="rv gp gs d2" style="text-align:center;padding:44px 16px">
+                        <div style="opacity:.4;margin-bottom:12px">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+                                <path fill="#FF2D9B" d="M60 5L25 50h18L33 95 75 50H55z"/>
+                            </svg>
+                        </div>
+                        <div class="mv">3</div>
+                        <div class="ml">US Patents</div>
+                    </div>
+                    <div class="rv gp gs d3" style="text-align:center;padding:44px 16px">
+                        <div style="opacity:.4;margin-bottom:12px">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+                                <path fill="#FF2D9B" d="M50 8l11 26 28 2-21 18 7 27-25-15-25 15 7-27-21-18 28-2z"/>
+                            </svg>
+                        </div>
+                        <div class="mv">2</div>
+                        <div class="ml">Nature Papers</div>
+                    </div>
+                    <div class="rv gp gs d4" style="text-align:center;padding:44px 16px">
+                        <div style="opacity:.4;margin-bottom:12px">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+                                <circle cx="50" cy="50" r="38" fill="none" stroke="#FF2D9B" stroke-width="5"/>
+                                <path fill="none" stroke="#FF2D9B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M50 28v24l16 10"/>
+                            </svg>
+                        </div>
+                        <div class="mv">25+</div>
+                        <div class="ml">Years</div>
+                    </div>
+                </div>
+
+                <div class="rv gp" style="margin-top:16px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <rect x="18" y="12" width="64" height="76" rx="4" fill="none" stroke="#FF2D9B" stroke-width="5"/>
+                                <path fill="none" stroke="#FF2D9B" stroke-width="5" stroke-linecap="round" d="M30 34h40M30 50h40M30 66h24"/>
+                            </svg>
+                            Key Publications
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:18px">Selected peer-reviewed work</h3>
+                        <div style="display:flex;flex-direction:column;gap:16px">
+                            <div>
+                                <a href="https://doi.org/10.1080/19336950.2018.1547611" target="_blank" style="font-size:18px;font-weight:600;color:var(--fg);line-height:1.5;border-bottom:1px solid var(--bd)">TRPV1 is a component of the atrial natriuretic signaling complex, and using orally delivered antagonists, presents a valid therapeutic target in the longitudinal reversal and treatment of cardiac hypertrophy and heart failure ↗</a>
+                                <div style="font-size:15px;color:var(--mu);margin-top:4px">Horton JS, Shiraishi T, Alfulaij N, et al. · Channels, 2019</div>
+                            </div>
+                            <div>
+                                <a href="https://doi.org/10.4161/chan.23006" target="_blank" style="font-size:18px;font-weight:600;color:var(--fg);line-height:1.5;border-bottom:1px solid var(--bd)">Successful TRPV1 antagonist treatment for cardiac hypertrophy and heart failure in mice ↗</a>
+                                <div style="font-size:15px;color:var(--mu);margin-top:4px">Horton JS, Buckley CL, Stokes AJ · Channels, 2013</div>
+                            </div>
+                            <div>
+                                <a href="https://doi.org/10.4161/chan.5.4.17083" target="_blank" style="font-size:18px;font-weight:600;color:var(--fg);line-height:1.5;border-bottom:1px solid var(--bd)">Mice lacking functional TRPV1 are protected from pressure overload cardiac hypertrophy ↗</a>
+                                <div style="font-size:15px;color:var(--mu);margin-top:4px">Buckley CL, Stokes AJ · Channels, 2011</div>
+                            </div>
+                            <div>
+                                <a href="https://doi.org/10.1038/35079092" target="_blank" style="font-size:18px;font-weight:600;color:var(--fg);line-height:1.5;border-bottom:1px solid var(--bd)">LTRPC7 is a Mg·ATP-regulated divalent cation channel required for cell viability ↗</a>
+                                <div style="font-size:15px;color:var(--mu);margin-top:4px">Nadler MJS, et al. · Nature, 2001</div>
+                            </div>
+                            <div>
+                                <a href="https://doi.org/10.1038/35079100" target="_blank" style="font-size:18px;font-weight:600;color:var(--fg);line-height:1.5;border-bottom:1px solid var(--bd)">ADP-ribose gating of the calcium-permeable LTRPC2 channel revealed by Nudix motif homology ↗</a>
+                                <div style="font-size:15px;color:var(--mu);margin-top:4px">Perraud A-L, et al. · Nature, 2001</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="sc">
+            <div class="ct">
+                <div class="rv" style="margin-bottom:40px">
+                    <div class="lb">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                            <circle cx="50" cy="35" r="15" fill="#FF2D9B"/>
+                            <path fill="#FF2D9B" d="M20 85c0-16 13-29 30-29s30 13 30 29"/>
+                        </svg>
+                        Our Team
+                    </div>
+                    <h2 class="hd h2" style="margin-bottom:12px">Leadership & Expertise</h2>
+                    <p style="font-size:19px;color:var(--mu);font-weight:300;max-width:640px">
+                        The scientific leadership, strategic partners, and intellectual-property counsel behind the programme.
+                    </p>
+                </div>
+
+                <!-- Chief Science Officer -->
+                <div class="rv gp d1" style="margin-bottom:16px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <circle cx="50" cy="35" r="15" fill="#FF2D9B"/>
+                                <path fill="#FF2D9B" d="M20 85c0-16 13-29 30-29s30 13 30 29"/>
+                            </svg>
+                            Chief Science Officer
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:4px">Alexander J. Stokes</h3>
+                        <div style="font-size:19px;color:var(--ac);margin-bottom:16px;font-weight:300;letter-spacing:1px">Ph.D., F.R.S.B., F.R.S.M.</div>
+                        <p style="font-size:19px;color:var(--fg);opacity:.92;line-height:1.8;margin-bottom:10px">
+                            University of Hawaiʻi at Mānoa ⋅ Cardiovascular Ion Channel Research Laboratory
+                        </p>
+                        <p style="font-size:17px;color:var(--mu);line-height:1.85;font-weight:300;margin-bottom:16px">
+                            25+ years in ion-channel research at Harvard Medical School, the Imperial Cancer Research Fund, and the University of Hawaiʻi at Mānoa, where the cardiac TRPV1 work was carried out. Two Nature papers; h-index 26; continuously federally funded since 1999 (NIH, NSF). Fellow of the Royal Society of Biology and the Royal Society of Medicine; National Academy of Inventors (Hawaii chapter). Identified TRPV1's role in cardiac hypertrophy and heart failure.
+                        </p>
+                        <div class="pls">
+                            <a href="https://orcid.org/0000-0002-3526-4685" target="_blank" class="pl pk">ORCID ↗</a>
+                            <a href="https://scholar.google.com/citations?user=FL0sy-4AAAAJ" target="_blank" class="pl">Scholar ↗</a>
+                            <a href="https://www.linkedin.com/in/alexander-stokes-aj968/" target="_blank" class="pl">LinkedIn ↗</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Partners -->
+                <div class="rv gp d2" style="margin-bottom:16px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="#FF2D9B" d="M50 5C40 18 32 38 32 55l-14 12 6 16 14-8c4 3 8 5 12 5s8-2 12-5l14 8 6-16-14-12c0-17-8-37-18-50z"/>
+                            </svg>
+                            Strategic Partners
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:16px">Key Partners & Advisors</h3>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+                            <div>
+                                <div style="font-size:17px;font-weight:600;color:var(--fg);margin-bottom:4px">David Watumull</div>
+                                <div style="font-size:15px;color:var(--ac);margin-bottom:8px;letter-spacing:1px">Strategic Partner</div>
+                                <a href="https://www.linkedin.com/in/david-watumull-7b48836/" target="_blank" class="link-pill">LinkedIn ↗</a>
+                            </div>
+                            <div>
+                                <div style="font-size:17px;font-weight:600;color:var(--fg);margin-bottom:4px">Edward Jay Wilusz</div>
+                                <div style="font-size:15px;color:var(--ac);margin-bottom:8px;letter-spacing:1px">Strategic Partner</div>
+                                <a href="https://www.linkedin.com/in/e-jay-wilusz-0a76639/" target="_blank" class="link-pill">LinkedIn ↗</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IP Team -->
+                <div class="rv gp d3" style="margin-bottom:16px">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="#FF2D9B" d="M50 10C30 10 15 25 15 45v20c0 15 10 25 25 25h10V70H40c-5 0-10-5-10-10V45c0-10 10-20 20-20s20 10 20 20v15c0 5-5 10-10 10H50v20h10c15 0 25-10 25-25V45C85 25 70 10 50 10z"/>
+                            </svg>
+                            Intellectual Property
+                        </div>
+                        <h3 class="hd h3" style="margin-bottom:16px">Knobbe Martens IP Team</h3>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+                            <div>
+                                <div style="font-size:17px;font-weight:600;color:var(--fg);margin-bottom:4px">Jason J. Jardine</div>
+                                <div style="font-size:15px;color:var(--ac);margin-bottom:8px;letter-spacing:1px">Partner, Knobbe Martens</div>
+                                <div style="font-size:16px;color:var(--mu);line-height:1.6;margin-bottom:8px">A nationally recognized patent professional and biotech/pharma IP specialist, expert at securing patent approval for difficult applications.</div>
+                                <a href="https://www.knobbe.com/professionals/jason-jardine/" target="_blank" class="link-pill patent">Knobbe Profile ↗</a>
+                            </div>
+                            <div>
+                                <div style="font-size:17px;font-weight:600;color:var(--fg);margin-bottom:4px">Mark Rubinshtein</div>
+                                <div style="font-size:15px;color:var(--ac);margin-bottom:8px;letter-spacing:1px">Ph.D., J.D., Counsel</div>
+                                <div style="font-size:16px;color:var(--mu);line-height:1.6;margin-bottom:8px">Ph.D. Organic Chemistry from UC San Diego (Alzheimer's therapeutics research). Patent litigation & prosecution for chemical/pharmaceutical industries.</div>
+                                <a href="https://www.linkedin.com/in/mark-rubinshtein-phd-jd-6473b85/" target="_blank" class="link-pill">LinkedIn ↗</a>
+                            </div>
+                        </div>
+                        <div style="margin-top:20px">
+                            <span class="kw">3 Patents</span>
+                            <span class="kw">Global Portfolio</span>
+                            <span class="kw">Legal 500</span>
+                            <span class="kw">IAM Patent 1000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ip" class="sc">
+            <div class="ct">
+                <div class="lb rv">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                        <path fill="#FF2D9B" d="M60 5L25 50h18L33 95 75 50H55z"/>
+                    </svg>
+                    Intellectual Property
+                </div>
+                <h2 class="hd h2 rv" style="margin-bottom:16px">Patent Portfolio</h2>
+                <p class="rv" style="font-size:19px;color:var(--mu);font-weight:300;max-width:720px;margin-bottom:28px;line-height:1.7">
+                    Three granted US patents covering TRPV1 inhibition for cardiac hypertrophy and heart failure, exclusively licensed to Makai from the University of Hawaii. Inventor: Dr. Alexander J. Stokes. All three expire 2 November 2031.
+                </p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+                    <div class="rv gp gs d1" style="min-height:160px;display:flex;flex-direction:column;border-top:3px solid #ef5555">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                            <div style="font-size:14px;letter-spacing:1.5px;font-weight:500;color:#ef5555">US 9,084,786</div>
+                            <div style="font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu)">Issued • 2015</div>
+                        </div>
+                        <div style="font-size:20px;font-weight:700;color:var(--fg);line-height:1.4;margin-bottom:10px">Cardiac Hypertrophy Treatment</div>
+                        <div style="font-size:16px;color:var(--mu);line-height:1.7;font-weight:300;margin-bottom:12px">TRPV1 inhibitors for heart failure prevention and treatment.</div>
+                        <div style="flex:1"></div>
+                        <a href="https://patents.google.com/patent/US9084786" target="_blank" style="font-size:14px;color:var(--mu);border:1px solid var(--bd);padding:5px 14px;border-radius:4px;font-weight:500">View ↗</a>
+                    </div>
+                    <div class="rv gp gs" style="min-height:160px;display:flex;flex-direction:column;border-top:3px solid #2e8b7a">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                            <div style="font-size:14px;letter-spacing:1.5px;font-weight:500;color:#2e8b7a">US 10,137,123</div>
+                            <div style="font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu)">Issued • 2018</div>
+                        </div>
+                        <div style="font-size:20px;font-weight:700;color:var(--fg);line-height:1.4;margin-bottom:10px">Cardiac Hypertrophy Treatment <span style="font-weight:400;color:var(--mu)">(Cont.)</span></div>
+                        <div style="font-size:16px;color:var(--mu);line-height:1.7;font-weight:300;margin-bottom:12px">Continuation of US 9,084,786 — TRPV1 inhibition for the prevention and treatment of cardiac hypertrophy and heart failure.</div>
+                        <div style="flex:1"></div>
+                        <a href="https://patents.google.com/patent/US10137123B2" target="_blank" style="font-size:14px;color:var(--mu);border:1px solid var(--bd);padding:5px 14px;border-radius:4px;font-weight:500">View ↗</a>
+                    </div>
+                    <div class="rv gp gs d2" style="min-height:160px;display:flex;flex-direction:column;border-top:3px solid #378ADD">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                            <div style="font-size:14px;letter-spacing:1.5px;font-weight:500;color:#378ADD">US 12,403,139</div>
+                            <div style="font-size:14px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu)">Issued • 2025</div>
+                        </div>
+                        <div style="font-size:20px;font-weight:700;color:var(--fg);line-height:1.4;margin-bottom:10px">Cardiac Hypertrophy Treatment <span style="font-weight:400;color:var(--mu)">(Cont.)</span></div>
+                        <div style="font-size:16px;color:var(--mu);line-height:1.7;font-weight:300;margin-bottom:12px">2025 continuation of US 9,084,786 — methods and compositions for preventing and treating cardiac hypertrophy and heart failure via TRPV1 inhibition.</div>
+                        <div style="flex:1"></div>
+                        <a href="https://patents.google.com/patent/US12403139B2" target="_blank" style="font-size:14px;color:var(--mu);border:1px solid var(--bd);padding:5px 14px;border-radius:4px;font-weight:500">View ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact" class="sc">
+            <div class="ct">
+                <div class="rv gp">
+                    <div class="gp-inner">
+                        <div class="lb">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20" style="margin-right:8px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                <path fill="#FF2D9B" d="M50 5C34 5 22 17 22 33c0 22 28 52 28 52s28-30 28-52C78 17 66 5 50 5z"/>
+                                <circle cx="50" cy="33" r="11" fill="#04101E"/>
+                            </svg>
+                            Programme
+                        </div>
+                        <h2 class="hd h2" style="margin-bottom:28px">Stage and partnering</h2>
+                        <p style="font-size:21px;color:var(--fg);opacity:.92;max-width:640px;line-height:1.85;font-weight:300;margin-bottom:24px">
+                            Makai's position is a validated cardiovascular target with a method-of-use and target-biology patent estate licensed from the University of Hawaii, supported by preclinical reversal data. The programme is preclinical and does not include a clinical-stage compound. Makai is seeking a partner with a TRPV1 antagonist to advance the cardiovascular indication.
+                        </p>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px">
+                            <div style="padding-left:16px;border-left:2px solid var(--bd)">
+                                <div style="font-size:15px;color:var(--pk);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:6px">Target</div>
+                                <div style="font-size:17px;color:var(--fg);opacity:.92;line-height:1.6">TRPV1, validated in preclinical cardiac models</div>
+                            </div>
+                            <div style="padding-left:16px;border-left:2px solid var(--bd)">
+                                <div style="font-size:15px;color:var(--pk);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:6px">Position</div>
+                                <div style="font-size:17px;color:var(--fg);opacity:.92;line-height:1.6">Method-of-use and biology IP, licensed from the University of Hawaii</div>
+                            </div>
+                            <div style="padding-left:16px;border-left:2px solid var(--bd)">
+                                <div style="font-size:15px;color:var(--pk);text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:6px">Seeking</div>
+                                <div style="font-size:17px;color:var(--fg);opacity:.92;line-height:1.6">A development partner with a TRPV1 antagonist compound</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="sc">
+            <div class="ct">
+                <div class="rv gp">
+                    <div class="gp-inner">
+                        <div class="ccg">
+                            <div>
+                                <div class="lb">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="22" height="22" style="margin-right:6px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                        <path fill="#FF2D9B" d="M50 5C34 5 22 17 22 33c0 22 28 52 28 52s28-30 28-52C78 17 66 5 50 5z"/>
+                                        <circle cx="50" cy="33" r="11" fill="#04101E"/>
+                                    </svg>
+                                    Contact
+                                </div>
+                                <h2 class="hd h2" style="margin-bottom:28px">Partnering and licensing</h2>
+                                <div style="margin-bottom:22px">
+                                    <div class="ccl">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="22" height="22" style="margin-right:6px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                            <rect x="8" y="22" width="84" height="56" rx="5" fill="none" stroke="#FF2D9B" stroke-width="5"/>
+                                            <path fill="none" stroke="#FF2D9B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M8 25l42 30 42-30"/>
+                                        </svg>
+                                        General Inquiries
+                                    </div>
+                                    <div class="ccv">
+                                        <a href="mailto:info@makaibio.com">info@makaibio.com</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="ccl">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="22" height="22" style="margin-right:6px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                            <path fill="#FF2D9B" d="M50 5C34 5 22 17 22 33c0 22 28 52 28 52s28-30 28-52C78 17 66 5 50 5z"/>
+                                            <circle cx="50" cy="33" r="11" fill="#04101E"/>
+                                        </svg>
+                                        Location
+                                    </div>
+                                    <div class="ccv">Honolulu, Hawaii</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="ccl">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="22" height="22" style="margin-right:6px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                        <path fill="#FF2D9B" d="M50 5C40 18 32 38 32 55l-14 12 6 16 14-8c4 3 8 5 12 5s8-2 12-5l14 8 6-16-14-12c0-17-8-37-18-50z"/>
+                                        <circle cx="50" cy="42" r="8" fill="#04101E"/>
+                                    </svg>
+                                    Opportunities
+                                </div>
+                                <a href="mailto:partner@makaibio.com" class="ai" style="cursor:pointer">Partnerships ↗</a>
+                                <a href="mailto:license@makaibio.com" class="ai" style="cursor:pointer">Licensing ↗</a>
+                                <div style="margin-top:24px">
+                                    <div class="ccl">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="22" height="22" style="margin-right:6px;vertical-align:middle;flex-shrink:0;opacity:.85">
+                                            <rect x="15" y="10" width="70" height="82" rx="3" fill="none" stroke="#FF2D9B" stroke-width="5"/>
+                                            <rect x="25" y="22" width="10" height="8" rx="1" fill="#FF2D9B"/>
+                                            <rect x="45" y="22" width="10" height="8" rx="1" fill="#FF2D9B"/>
+                                            <rect x="65" y="22" width="10" height="8" rx="1" fill="#FF2D9B"/>
+                                        </svg>
+                                        Research Affiliations
+                                    </div>
+                                    <div class="ai">University of Hawaiʻi at Mānoa</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="fn">
+                <span style="font-size:16px;font-weight:800;letter-spacing:-.5px;color:var(--mu)">
+                    <span style="color:var(--fg)">Makai </span>
+                    <span style="color:var(--ac)">Biotechnology</span>
+                </span>
+                <div class="co">© 2026 Makai Biotechnology LLC · Cardiovascular ion-channel therapeutics, Honolulu</div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Theme Toggle
+        (function(){
+            var r = document.documentElement, b = document.getElementById("tg2");
+            var lt = false;
+            b.addEventListener("click", function(e){
+                e.stopPropagation();
+                lt = !lt;
+                r.classList.toggle("light", lt);
+                b.innerHTML = lt ? "🌙" : "☀";
+                document.body.style.background = getComputedStyle(r).getPropertyValue("--bg2");
+            });
+        })();
+
+        // Entry Animation
+        function unlock(){
+            var g = document.getElementById("eg"), m = document.getElementById("mc"), nv = document.getElementById("nv");
+            g.classList.add("ex");
+            setTimeout(function(){
+                g.style.display = "none";
+                document.body.classList.remove("locked");
+                m.classList.add("vi");
+                nv.classList.add("vi");
+                hs();
+            }, 900);
+        }
+
+        function hs(){
+            document.querySelectorAll(".rv").forEach(function(e){
+                if(e.getBoundingClientRect().top < window.innerHeight - 80) e.classList.add("ac");
+            });
+        }
+
+        window.addEventListener("scroll", hs);
+        document.getElementById("eg").addEventListener("click", unlock);
+        document.querySelector(".eb").addEventListener("click", function(e){
+            e.stopPropagation();
+            unlock();
+        });
+
+        // Mechanism animation — play when scrolled into view, click to pause/resume
+        (function(){
+            var v = document.getElementById("mechVid");
+            if (!v) return;
+            var manuallyPaused = false;
+            function tryPlay(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+            if ("IntersectionObserver" in window) {
+                var io = new IntersectionObserver(function(entries){
+                    entries.forEach(function(en){
+                        if (en.isIntersecting && en.intersectionRatio >= 0.35) {
+                            if (!manuallyPaused) tryPlay();
+                        } else {
+                            v.pause();
+                        }
+                    });
+                }, { threshold: [0, 0.35, 0.6] });
+                io.observe(v);
+            } else {
+                tryPlay();
+            }
+            v.parentNode.addEventListener("click", function(){
+                if (v.paused) { manuallyPaused = false; tryPlay(); }
+                else { manuallyPaused = true; v.pause(); }
+            });
+        })();
+
+        // Clean Ethereal ECG - single sweeping trace (frame-rate independent)
+        (function(){
+            var canvas = document.getElementById("cv");
+            if (!canvas) return;
+
+            var ctx = canvas.getContext("2d");
+            var width, height;
+
+            function resize(){
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            resize();
+
+            // ECG waveform shape (one beat)
+            var pattern = [0,0,0,0,0,0,0,0,0,0, 0,0.1,0.25,0.4,0.4,0.25,0.1,0, 0,0,0,0,0,0, 0,0,-0.2,-0.4,1.8,-0.7,0.4,0.2,0,0, 0,0,0,0,0, 0,0.1,0.3,0.5,0.6,0.6,0.5,0.3,0.1,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+            var SPEED = 240;       // px/sec sweep speed — independent of display refresh rate
+            var trail = [];
+            var startTs = null;
+
+            function animate(ts){
+                // Drive motion from wall-clock time, not frame count, so a 120Hz
+                // ProMotion display sweeps at the same rate as a 60Hz one.
+                if(startTs === null) startTs = ts;
+                var elapsed = (ts - startTs) / 1000;   // seconds since start
+
+                ctx.clearRect(0, 0, width, height);
+
+                var isLight = document.documentElement.classList.contains("light");
+                var color = isLight ? "217,26,128" : "255,45,155";
+
+                // Grid
+                ctx.strokeStyle = isLight ? "rgba(40,80,110,0.03)" : "rgba(55,138,221,0.03)";
+                ctx.lineWidth = 0.4;
+                for(var i = 0; i <= 10; i++){
+                    ctx.beginPath();
+                    ctx.moveTo(0, (height/10)*i);
+                    ctx.lineTo(width, (height/10)*i);
+                    ctx.stroke();
+                }
+                for(var i = 0; i <= 16; i++){
+                    ctx.beginPath();
+                    ctx.moveTo((width/16)*i, 0);
+                    ctx.lineTo((width/16)*i, height);
+                    ctx.stroke();
+                }
+
+                // Pulse position and waveform value
+                var centerY = height * 0.22;
+                var amplitude = 60;
+                var sweepLen = width + 200;
+                var dist = elapsed * SPEED;
+                var pulseX = (dist % sweepLen) - 100;
+
+                var patternPos = dist % 800;
+                var index = (patternPos / 800) * pattern.length;
+                var i1 = Math.floor(index) % pattern.length;
+                var i2 = (i1 + 1) % pattern.length;
+                var val = pattern[i1] + (pattern[i2] - pattern[i1]) * (index - i1);
+                var pulseY = centerY + val * amplitude;
+
+                // Keep the trail shorter than one full sweep so the previous
+                // sweep has fully faded before the next one reaches the same
+                // spot — this is what prevents a second "ghost" trace.
+                var period = sweepLen / SPEED;                  // seconds per sweep
+                var life = Math.min(4, period * 0.85) * 1000;   // ms
+
+                if(pulseX >= 0 && pulseX <= width){
+                    trail.push({ x: pulseX, y: pulseY, t: ts });
+                }
+                trail = trail.filter(function(p){ return (ts - p.t) < life; });
+
+                // Draw trail
+                for(var i = 1; i < trail.length; i++){
+                    if(trail[i].x < trail[i-1].x) continue;   // never bridge the wrap seam
+                    var age = ts - trail[i].t;
+                    var alpha = Math.max(0, 1 - age/life) * 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(trail[i-1].x, trail[i-1].y);
+                    ctx.lineTo(trail[i].x, trail[i].y);
+                    ctx.strokeStyle = "rgba(" + color + "," + alpha + ")";
+                    ctx.lineWidth = 2 + alpha;
+                    ctx.lineCap = "round";
+                    ctx.stroke();
+                }
+
+                // Draw leading pulse dot
+                if(pulseX >= 0 && pulseX <= width){
+                    ctx.beginPath();
+                    ctx.arc(pulseX, pulseY, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(" + color + ",0.9)";
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+            window.addEventListener("resize", resize);
+        })();
+
+        // Logo click to return home
+        document.querySelectorAll(".nav-logo, #main-logo").forEach(function(el){
+            el.addEventListener("click", function(e){
+                e.preventDefault();
+                document.getElementById("mc").classList.remove("vi");
+                document.getElementById("nv").classList.remove("vi");
+                var g = document.getElementById("eg");
+                g.style.display = "";
+                g.classList.remove("ex");
+                document.body.classList.add("locked");
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                // Only proceed if href is more than just '#'
+                if (href && href.length > 1) {
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
