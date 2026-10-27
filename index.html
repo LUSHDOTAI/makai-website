@@ -1585,6 +1585,10 @@
         (function(){
             var v = document.getElementById("mechVid");
             if (!v) return;
+            // Start fetching the full video once the rest of the page has finished loading
+            window.addEventListener("load", function(){
+                try { v.preload = "auto"; v.load(); } catch(e){}
+            });
             var manuallyPaused = false;
             function tryPlay(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
             if ("IntersectionObserver" in window) {
